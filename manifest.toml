@@ -5,7 +5,7 @@ id = "pigeonpod"
 name = "PigeonPod"
 description.en = "Self-hosted RSS feeds from YouTube and Bilibili"
 description.fr = "Flux RSS auto-hébergés depuis YouTube et Bilibili"
-version = "1.30.0~ynh1"
+version = "1.30.0~ynh2"
 maintainers = ["pigeonpod_ynh contributors"]
 
 [upstream]
@@ -44,6 +44,14 @@ sha256 = "66b25d748893a1ac01bc59a6b14f7167810c3eead4102c00b4c2b1a80e72b1e8"
 in_subdir = true
 autoupdate.strategy = "latest_github_tag"
 
+[resources.sources.ytdlp]
+url = "https://github.com/yt-dlp/yt-dlp/releases/download/2026.8.19/yt-dlp"
+sha256 = "1fa6733c37ea6fb51c99ad8fe785e7b7e5f3246c9b980230329d4fb72ed8d4d6"
+extract = false
+rename = "yt-dlp"
+autoupdate.strategy = "latest_github_release"
+autoupdate.asset = "^yt-dlp$"
+
 [resources.system_user]
 
 [resources.install_dir]
@@ -62,7 +70,6 @@ packages = [
   "default-jdk-headless",
   "maven",
   "ffmpeg",
-  "yt-dlp",
   "sqlite3"
 ]
 
