@@ -1,0 +1,65 @@
+#!/bin/bash
+
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# STOP SERVICE
+#=================================================
+ynh_script_progression "Stopping PigeonPod..."
+ynh_systemctl --service="$app" --action="stop"
+
+#=================================================
+# DOWNLOAD AND BUILD NEW UPSTREAM VERSION
+#=================================================
+ynh_script_progression "Building the new PigeonPod version..."
+
+build_dir="/tmp/${app}-build"
+rm -rf "$build_dir"
+mkdir -p "$build_dir"
+chown "$app:$app" "$build_dir"
+trap 'rm -rf "$build_dir"' EXIT
+
+ynh_setup_source --dest_dir="$build_dir" --full_replace
+chown -R "$app:$app" "$build_dir"
+
+ynh_exec_as_app bash -c "set -euo pipefail
+cd '$build_dir/frontend'
+npm install
+npm run build
+rm -rf '$build_dir/backend/src/main/resources/static'
+mkdir -p '$build_dir/backend/src/main/resources/static'
+cp -a dist/. '$build_dir/backend/src/main/resources/static/'
+cd '$build_dir/backend'
+mvn clean package -DskipTests -Dmaven.repo.local='$build_dir/.m2'
+"
+
+upstream_version="$(ynh_app_upstream_version)"
+jar_file="$build_dir/backend/target/pigeon-pod-${upstream_version}.jar"
+if [[ ! -f "$jar_file" ]]; then
+  ynh_die "PigeonPod JAR was not produced at $jar_file"
+fi
+install -o "$app" -g "$app" -m 0755 "$jar_file" "$install_dir/pigeon-pod.jar"
+rm -rf "$install_dir/frontend" "$install_dir/backend" "$install_dir/.m2"
+mkdir -p "$data_dir"/{audio,video,cover,ssl,tools}
+chown -R "$app:$app" "$data_dir"
+
+#=================================================
+# REAPPLY SYSTEM CONFIGURATION
+#=================================================
+ynh_script_progression "Reconfiguring PigeonPod service and reverse proxy..."
+ynh_config_add_nginx
+ynh_config_add_systemd
+
+yunohost service add "$app" --description="PigeonPod podcast feed service" --log="/var/log/$app/$app.log"
+
+#=================================================
+# START SERVICE
+#=================================================
+ynh_script_progression "Starting PigeonPod after upgrade..."
+ynh_systemctl --service="$app" --action="start"
+
+ynh_script_progression "Upgrade of PigeonPod completed"

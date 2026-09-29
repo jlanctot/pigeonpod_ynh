@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+source _common.sh
+source /usr/share/yunohost/helpers
+
+ynh_script_progression "Updating PigeonPod reverse proxy configuration..."
+ynh_change_url_nginx_config
+ynh_systemctl --service="$app" --action="restart"
+
+ynh_print_warn "PigeonPod can generate absolute feed/media URLs from its Base URL setting. After changing the domain, verify the Base URL in PigeonPod's web interface."

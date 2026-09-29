@@ -1,0 +1,52 @@
+[Unit]
+Description=PigeonPod podcast feed service
+After=network.target
+
+[Service]
+Type=simple
+User=__APP__
+Group=__APP__
+WorkingDirectory=__INSTALL_DIR__/
+Environment="PATH=__PATH_WITH_NODEJS__"
+Environment="SERVER_ADDRESS=127.0.0.1"
+Environment="SERVER_PORT=__PORT__"
+Environment="SPRING_DATASOURCE_URL=jdbc:sqlite:__DATA_DIR__/pigeon-pod.db?journal_mode=WAL&synchronous=NORMAL&cache_size=10000&temp_store=memory&busy_timeout=3000"
+Environment="PIGEON_AUDIO_FILE_PATH=__DATA_DIR__/audio/"
+Environment="PIGEON_VIDEO_FILE_PATH=__DATA_DIR__/video/"
+Environment="PIGEON_COVER_FILE_PATH=__DATA_DIR__/cover/"
+Environment="PIGEON_FFMPEG_LOCATION=/usr/bin/ffmpeg"
+Environment="PIGEON_YT_DLP_MANAGED_ROOT=__DATA_DIR__/tools/yt-dlp"
+ExecStart=/usr/bin/java -Dfile.encoding=UTF-8 -jar __INSTALL_DIR__/pigeon-pod.jar
+StandardOutput=append:/var/log/__APP__/__APP__.log
+StandardError=append:/var/log/__APP__/__APP__.log
+Restart=on-failure
+RestartSec=5
+
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+RestrictNamespaces=yes
+RestrictRealtime=yes
+DevicePolicy=closed
+ProtectClock=yes
+ProtectHostname=yes
+ProtectProc=invisible
+ProtectSystem=full
+ProtectControlGroups=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+LockPersonality=yes
+SystemCallArchitectures=native
+SystemCallFilter=~@clock @debug @module @mount @obsolete @reboot @setuid @swap @cpu-emulation @privileged
+CapabilityBoundingSet=~CAP_RAWIO CAP_MKNOD
+CapabilityBoundingSet=~CAP_AUDIT_CONTROL CAP_AUDIT_READ CAP_AUDIT_WRITE
+CapabilityBoundingSet=~CAP_SYS_BOOT CAP_SYS_TIME CAP_SYS_MODULE CAP_SYS_PACCT
+CapabilityBoundingSet=~CAP_LEASE CAP_LINUX_IMMUTABLE CAP_IPC_LOCK
+CapabilityBoundingSet=~CAP_BLOCK_SUSPEND CAP_WAKE_ALARM
+CapabilityBoundingSet=~CAP_SYS_TTY_CONFIG
+CapabilityBoundingSet=~CAP_MAC_ADMIN CAP_MAC_OVERRIDE
+CapabilityBoundingSet=~CAP_NET_ADMIN CAP_NET_BROADCAST CAP_NET_RAW
+
+[Install]
+WantedBy=multi-user.target

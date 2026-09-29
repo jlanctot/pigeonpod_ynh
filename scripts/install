@@ -1,0 +1,74 @@
+#!/bin/bash
+
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# BUILD PIGEONPOD FROM THE PINNED UPSTREAM RELEASE
+#=================================================
+ynh_script_progression "Building PigeonPod from upstream sources..."
+
+build_dir="/tmp/${app}-build"
+rm -rf "$build_dir"
+mkdir -p "$build_dir"
+chown "$app:$app" "$build_dir"
+trap 'rm -rf "$build_dir"' EXIT
+
+ynh_setup_source --dest_dir="$build_dir"
+chown -R "$app:$app" "$build_dir"
+
+# Build as the application user so npm and Maven caches remain unprivileged.
+ynh_exec_as_app bash -c "set -euo pipefail
+cd '$build_dir/frontend'
+npm install
+npm run build
+rm -rf '$build_dir/backend/src/main/resources/static'
+mkdir -p '$build_dir/backend/src/main/resources/static'
+cp -a dist/. '$build_dir/backend/src/main/resources/static/'
+cd '$build_dir/backend'
+mvn clean package -DskipTests -Dmaven.repo.local='$build_dir/.m2'
+"
+
+upstream_version="$(ynh_app_upstream_version)"
+jar_file="$build_dir/backend/target/pigeon-pod-${upstream_version}.jar"
+if [[ ! -f "$jar_file" ]]; then
+  ynh_die "PigeonPod JAR was not produced at $jar_file"
+fi
+
+install -o "$app" -g "$app" -m 0755 "$jar_file" "$install_dir/pigeon-pod.jar"
+rm -rf "$install_dir/frontend" "$install_dir/backend" "$install_dir/.m2"
+
+#=================================================
+# APPLICATION DATA DIRECTORY
+#=================================================
+ynh_script_progression "Preparing PigeonPod data directories..."
+
+mkdir -p "$data_dir"/{audio,video,cover,ssl,tools}
+chown -R "$app:$app" "$data_dir"
+
+mkdir -p "/var/log/$app"
+chown "$app:$app" "/var/log/$app"
+
+touch "/var/log/$app/$app.log"
+chown "$app:$app" "/var/log/$app/$app.log"
+
+#=================================================
+# SYSTEM CONFIGURATION
+#=================================================
+ynh_script_progression "Configuring PigeonPod service and reverse proxy..."
+
+ynh_config_add_nginx
+ynh_config_add_systemd
+
+yunohost service add "$app" --description="PigeonPod podcast feed service" --log="/var/log/$app/$app.log"
+
+#=================================================
+# START SERVICE
+#=================================================
+ynh_script_progression "Starting PigeonPod..."
+ynh_systemctl --service="$app" --action="start"
+
+ynh_script_progression "Installation of PigeonPod completed"
