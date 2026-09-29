@@ -40,8 +40,7 @@ default = "visitors"
 [resources.sources]
 [resources.sources.main]
 url = "https://github.com/aizhimou/pigeon-pod/archive/refs/tags/1.30.0.tar.gz"
-# The checksum is intentionally omitted because the current upstream release does not publish a checksum file.
-# Verify the source release independently before using this package in a high-assurance environment.
+sha256 = "66b25d748893a1ac01bc59a6b14f7167810c3eead4102c00b4c2b1a80e72b1e8"
 in_subdir = true
 autoupdate.strategy = "latest_github_tag"
 
