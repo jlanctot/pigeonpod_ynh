@@ -5,7 +5,7 @@ id = "pigeonpod"
 name = "PigeonPod"
 description.en = "Self-hosted RSS feeds from YouTube and Bilibili"
 description.fr = "Flux RSS auto-hébergés depuis YouTube et Bilibili"
-version = "1.30.0~ynh2"
+version = "1.31.0~ynh1"
 maintainers = ["pigeonpod_ynh contributors"]
 
 [upstream]
@@ -39,8 +39,8 @@ default = "visitors"
 
 [resources.sources]
 [resources.sources.main]
-url = "https://github.com/aizhimou/pigeon-pod/archive/refs/tags/1.30.0.tar.gz"
-sha256 = "66b25d748893a1ac01bc59a6b14f7167810c3eead4102c00b4c2b1a80e72b1e8"
+url = "https://github.com/aizhimou/pigeon-pod/archive/refs/tags/1.31.0.tar.gz"
+sha256 = "e4a667589957c7af5a553c0c6fb8a1f4b5c3f22f7afe0da513b640d9dec1f87a"
 in_subdir = true
 autoupdate.strategy = "latest_github_tag"
 
