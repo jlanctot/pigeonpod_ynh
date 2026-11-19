@@ -5,7 +5,7 @@ id = "pigeonpod"
 name = "PigeonPod"
 description.en = "Self-hosted RSS feeds from YouTube and Bilibili"
 description.fr = "Flux RSS auto-hébergés depuis YouTube et Bilibili"
-version = "1.30.0~ynh2"
+version = "1.31.0~ynh2"
 maintainers = ["pigeonpod_ynh contributors"]
 
 [upstream]
@@ -39,14 +39,14 @@ default = "visitors"
 
 [resources.sources]
 [resources.sources.main]
-url = "https://github.com/aizhimou/pigeon-pod/archive/refs/tags/1.30.0.tar.gz"
-sha256 = "66b25d748893a1ac01bc59a6b14f7167810c3eead4102c00b4c2b1a80e72b1e8"
+url = "https://github.com/aizhimou/pigeon-pod/archive/refs/tags/1.31.0.tar.gz"
+sha256 = "e4a667589957c7af5a553c0c6fb8a1f4b5c3f22f7afe0da513b640d9dec1f87a"
 in_subdir = true
 autoupdate.strategy = "latest_github_tag"
 
 [resources.sources.ytdlp]
-url = "https://github.com/yt-dlp/yt-dlp/releases/download/2026.8.19/yt-dlp"
-sha256 = "1fa6733c37ea6fb51c99ad8fe785e7b7e5f3246c9b980230329d4fb72ed8d4d6"
+url = "https://github.com/yt-dlp/yt-dlp/releases/download/2026.10.26/yt-dlp"
+sha256 = "e51e69e89489f199530f13d32a4342da3ddb2cf34842f364603a066db05afbf3"
 extract = false
 rename = "yt-dlp"
 autoupdate.strategy = "latest_github_release"
