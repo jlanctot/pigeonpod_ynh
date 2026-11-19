@@ -3,16 +3,18 @@
 #=================================================
 # IMPORT GENERIC HELPERS
 #=================================================
-source _common.sh
+source "$(dirname -- "${BASH_SOURCE[0]}")/_common.sh"
 source /usr/share/yunohost/helpers
 
+#=================================================
+# BACKUP PIGEONPOD
+#=================================================
 ynh_script_progression "Backing up PigeonPod..."
 
-# The install directory contains the built JAR.
-ynh_backup --src_path="$install_dir" --is_big
+# Back up the application installation directory.
+ynh_backup "$install_dir"
 
-# The data directory contains the SQLite database, downloaded media,
-# covers, and PigeonPod-managed yt-dlp runtime files.
-ynh_backup --src_path="$data_dir" --is_big
+# Back up the database, downloaded media, covers, and managed tools.
+ynh_backup "$data_dir"
 
 ynh_script_progression "Backup of PigeonPod completed"
