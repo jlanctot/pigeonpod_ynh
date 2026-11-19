@@ -2,12 +2,12 @@
 
 Self-hosted RSS feeds from YouTube and Bilibili.
 
-This package targets PigeonPod 1.30.1 and follows the YunoHost packaging v2.1 template structure.
+This package targets PigeonPod 1.31.0 and follows the YunoHost packaging v2.1 template structure.
 
 ## Packaging choices
 
 - Native YunoHost service; Docker is not required.
-- PigeonPod is built from the upstream 1.30.1 source tag.
+- PigeonPod is built from the upstream 1.31.0 source tag.
 - Runtime/build dependencies are provided by Debian/YunoHost packages plus Node.js 22.
 - Persistent application state is stored in YunoHost's application data directory.
 - Installation is intended for the root of a dedicated domain because the current upstream Vite build uses root-relative asset paths.
